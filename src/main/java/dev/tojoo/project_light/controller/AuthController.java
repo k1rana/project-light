@@ -1,5 +1,6 @@
 package dev.tojoo.project_light.controller;
 
+import dev.tojoo.project_light.dto.ApiResponse;
 import dev.tojoo.project_light.dto.user.AuthResponse;
 import dev.tojoo.project_light.dto.user.LoginRequest;
 import dev.tojoo.project_light.dto.user.RegisterRequest;
@@ -19,13 +20,24 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@RequestBody RegisterRequest request) {
+        AuthResponse data = authService.register(request);
+        ApiResponse<AuthResponse> response = ApiResponse.<AuthResponse>builder()
+                .status(HttpStatus.CREATED.value())
+                .message("User registered successfully")
+                .data(data)
+                .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
+        AuthResponse data = authService.login(request);
+        ApiResponse<AuthResponse> response = ApiResponse.<AuthResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message("Login successful")
+                .data(data)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }
